@@ -1,3 +1,4 @@
+const os = require('os');
 const express = require('express');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const axios = require('axios');
@@ -33,8 +34,9 @@ app.post('/api/process-url', async (req, res) => {
     return res.status(400).json({ error: 'No file URL provided' });
   }
 
-  const tempInputFile = `temp_input_${uuidv4()}`;
-  const tempOutputFile = `temp_output_${uuidv4()}.mp3`;
+  const tempInputFile = path.join(os.tmpdir(), `temp_input_${uuidv4()}`);
+  const tempOutputFile = path.join(os.tmpdir(), `temp_output_${uuidv4()}.mp3`);
+
   const convertedKey = `${s3Folder}/${Date.now()}_${uuidv4()}.mp3`;
 
   try {
