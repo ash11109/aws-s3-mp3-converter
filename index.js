@@ -22,6 +22,10 @@ const s3Client = new S3Client({
 
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello AWS from ASH!' });
+});
+
 app.post('/api/process-url', async (req, res) => {
   const { file } = req.body;
 
