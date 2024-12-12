@@ -1,4 +1,6 @@
 const os = require('os');
+const cors = require('cors');
+const { exec } = require('child_process');
 const path = require('path');
 const express = require('express');
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
@@ -22,11 +24,27 @@ const s3Client = new S3Client({
   },
 });
 
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
   res.json({ message: 'Hello AWS from ASH!' });
 });
+
+app.get('/api/process-url', async (req, res) => {
+  res.json({ 
+    message: 'process url get' ,
+    dataFPTH: exec('ffmpeg -version', (error, stdout, stderr) => {
+                if (error) {
+                  return(`Error executing FFmpeg: ${error.message}`);
+                }
+                if (stderr) {
+                  return(`FFmpeg STDERR: ${stderr}`);
+                }
+                return(`FFmpeg STDOUT: ${stdout}`);
+              })
+  });
+})
 
 app.post('/api/process-url', async (req, res) => {
   const { file } = req.body;
